@@ -28,6 +28,10 @@ return {
             ensure_installed = {
                 "lua_ls",
                 "rust_analyzer",
+                "eslint",
+                "cssls",
+                "html",
+                "tailwindcss",
             },
             handlers = {
                 function(server_name) -- default handler (optional)
@@ -66,6 +70,60 @@ return {
                         }
                     }
                 end,
+                ["eslint"] = function ()
+                    local lspconfig = require("lspconfig")
+                    lspconfig.eslint.setup({
+                        capabilities = capabilities,
+                        settings = {
+                            eslint = {
+                                enable = true,
+                                autoFixOnSave = true,
+                                format = {enable = true},
+                            }
+                        },
+                        root_dir = lspconfig.util.root_pattern(".eslintrc", ".eslintrc.js", ".eslintrc.json"),
+                    })
+                end,
+                ["html"] = function()
+                    local lspconfig = require("lspconfig")
+                    lspconfig.html.setup({
+                        capabilities = capabilities,
+                        settings = {
+                            html = {
+                                format = { enable = true },
+                                hover = { documentation = true, references = true }
+                            }
+                        },
+                        root_dir = lspconfig.util.root_pattern(".html", ".htm"),
+                    })
+                end,
+                ["cssls"] = function()
+                    local lspconfig = require("lspconfig")
+                    lspconfig.cssls.setup({
+                        capabilities = capabilities,
+                        settings = {
+                            css = { validate = true },
+                            scss = { validate = true },
+                            less = { validate = true },
+                        },
+                    })
+                end,
+                ["tailwindcss"] = function()
+                    local lspconfig = require("lspconfig")
+                    lspconfig.tailwindcss.setup({
+                        capabilities = capabilities,
+                        settings = {
+                            tailwindCSS = {
+                                experimental = {
+                                    classRegex = {
+                                        { "tw`([^`]*)", "(.*)" },
+                                        { "tw\\(([^)]*)", "(.*)" },
+                                    },
+                                },
+                            },
+                        },
+                    })
+                end,
             }
         })
 
@@ -87,8 +145,8 @@ return {
                 { name = 'nvim_lsp' },
                 { name = 'luasnip' }, -- For luasnip users.
             }, {
-                { name = 'buffer' },
-            })
+                    { name = 'buffer' },
+                })
         })
 
         vim.diagnostic.config({
