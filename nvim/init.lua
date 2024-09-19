@@ -1,1 +1,1 @@
-require("captainjacksparrow")
+require 'captainjacksparrow'
