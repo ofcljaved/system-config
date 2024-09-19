@@ -1,0 +1,4 @@
+[submodule "nvim"]
+	path = nvim
+	url = git@github.com:ofcljaved/nvim.git
+	branch = main
