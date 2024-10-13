@@ -1,6 +1,4 @@
-set-option -g default-terminal "xterm-kitty"
-set -g terminal-overrides 'xterm-kitty:RGB'
-
+set-option -g default-terminal "screen-256color"
 
 set -g prefix C-a
 unbind C-b
