@@ -3,7 +3,43 @@ if status is-interactive
 end
 
 starship init fish | source
-export PATH="$PATH:/opt/nvim/"
+
+function add_to_path
+    if not contains $argv $PATH
+        set -gx PATH $argv $PATH
+    end
+end
+
+function rm 
+    set args
+    set ski_confirmation 0
+
+    for arg in $argv
+         if test $arg = "-y"
+            set ski_confirmation 1
+        else
+            set args $args $arg
+        end
+    end
+
+    if test $ski_confirmation -eq 0
+        echo "Are you sure you want to delete? Use -y to confirm. Files:  $args"
+        echo -n "Type 'yes' to proceed: "
+        read confirmation
+
+        if test $status -ne 0
+            echo "Aborted"
+            return 1
+        end
+
+        if test $confirmation != "yes"
+            echo "Aborted"
+            return 1
+        end
+    end
+
+    command rm $args
+end
 
 function fzf_dir
     set current_dir (pwd)
@@ -21,7 +57,6 @@ end
 
 bind \cf fzf_dir
 
-#set -U fish_greeting ""
 function fish_greeting
     set hour (date +"%H")
 
@@ -40,12 +75,15 @@ function fish_greeting
         echo "If I may ask, is something weighing on your mind—or perhaps just another brilliant idea?"
     end
 end
-#------ONLY FOR WSL--------
-#function go_home
-#   cd ~/../../mnt/c/
- #   commandline -f repaint
- #end
 
- #bind \ch go_home
+# Global variables
+set -gx NVM_DIR "$HOME/.nvm"
+set -gx BUN_INSTALL "$HOME/.bun"
+set -gx PNPM_HOME "$HOME/.local/share/pnpm"
 
-
+add_to_path "/opt/nvim/bin"
+add_to_path $BUN_INSTALL/bin 
+add_to_path "/usr/local/go/bin" 
+add_to_path "$HOME/.local/share/solana/install/active_release/bin" 
+add_to_path "$PNPM_HOME" 
+add_to_path "$HOME/.cargo/bin"
